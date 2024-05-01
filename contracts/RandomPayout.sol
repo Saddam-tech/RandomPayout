@@ -18,7 +18,7 @@ contract RandomPayout {
         owner = msg.sender;
         TOTAL_ADDRESSES = _totalAddresses;
         SELECTED_ADDRESSES = _selectedAddresses;
-        PAYOUT_AMOUNT = _payoutAmountWlc * 1 ether; // Convert amount from Ether to Wei
+        PAYOUT_AMOUNT = _payoutAmountWlc * 1 ether; // @dev Convert amount from Ether to Wei
 
         participantAddresses = new address[](TOTAL_ADDRESSES);
         selectedAddresses = new address[](SELECTED_ADDRESSES);
@@ -29,7 +29,7 @@ contract RandomPayout {
         _;
     }
 
-    // Function to deposit Ether into contract
+    // @dev Function to deposit Ether into contract
     function deposit() external payable onlyOwner {
         require(
             msg.value >= SELECTED_ADDRESSES * PAYOUT_AMOUNT,
@@ -37,7 +37,7 @@ contract RandomPayout {
         );
     }
 
-    // Function to set participant addresses
+    // @dev Function to set participant addresses
     function setParticipantAddresses(
         address[] memory addresses
     ) external onlyOwner {
@@ -48,20 +48,20 @@ contract RandomPayout {
         participantAddresses = addresses;
     }
 
-    // Function to randomly select addresses from participants
+    // @dev Function to randomly select addresses from participants
     function selectRandomAddresses() external onlyOwner {
         require(
             participantAddresses.length == TOTAL_ADDRESSES,
             "Participant addresses not set properly."
         );
 
-        // Copy participant addresses to a temporary array for shuffling
+        // @dev Copy participant addresses to a temporary array for shuffling
         address[] memory tempAddresses = new address[](TOTAL_ADDRESSES);
         for (uint i = 0; i < TOTAL_ADDRESSES; i++) {
             tempAddresses[i] = participantAddresses[i];
         }
 
-        // Shuffle addresses and pick the first unique addresses based on SELECTED_ADDRESSES
+        // @dev Shuffle addresses and pick the first unique addresses based on SELECTED_ADDRESSES
         for (uint i = 0; i < SELECTED_ADDRESSES; i++) {
             uint rand = random(TOTAL_ADDRESSES - i) + i;
             (tempAddresses[i], tempAddresses[rand]) = (
@@ -70,13 +70,13 @@ contract RandomPayout {
             );
         }
 
-        // Store the first selected addresses
+        // @dev Store the first selected addresses
         for (uint i = 0; i < SELECTED_ADDRESSES; i++) {
             selectedAddresses[i] = tempAddresses[i];
         }
     }
 
-    // Function to payout Ether to each selected address
+    // @dev Function to payout Ether to each selected address
     function executePayout() external onlyOwner {
         require(
             selectedAddresses.length == SELECTED_ADDRESSES,
@@ -92,7 +92,7 @@ contract RandomPayout {
         }
     }
 
-    // Pseudo-random number generator function (unsafe for production use)
+    // @dev Pseudo-random number generator function
     function random(uint mod) private view returns (uint) {
         return
             uint(
@@ -100,7 +100,7 @@ contract RandomPayout {
             ) % mod;
     }
 
-    // Withdraw remaining Ether (for owner only)
+    // @dev Withdraw remaining Ether (for owner only)
     function withdraw() external onlyOwner {
         payable(owner).transfer(address(this).balance);
     }
